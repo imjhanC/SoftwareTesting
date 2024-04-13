@@ -1,40 +1,38 @@
 package BookingSystem;
 
 public class Room {
-	private int vip = 10;
-	private	int deluxe = 20;
-	private	int standard = 30;
+	//Set arbitrary numbers for the rooms available
+	private int vip_room, deluxe_room, standard_room;
 	
+	public Room(int vip_room, int deluxe_room, int standard_room) {
+		this.vip_room = vip_room;
+		this.deluxe_room =	deluxe_room;
+		this.standard_room = standard_room;
+	}
+
 	// check room availability and book room
-	public int checkRoom(User user) {
-		if(user instanceof VIP && vip > 0) {
-			vip--;
-			return 1;
+	public boolean checkRoom(String room_type) {
+		if (room_type.toLowerCase().equals("vip")) {
+			if (vip_room > 0) {
+				return true;
+			}else{
+				return false;
+			}
+		}else if(room_type.toLowerCase().equals("deluxe")) {
+			if (deluxe_room > 0) {
+				return true;
+			}else{
+				return false;
+			}
+		}else if(room_type.toLowerCase().equals("standard")) {
+			if (standard_room > 0){
+				return true;
+			}else{
+				return false;
+			}
 		}
-		else if((user instanceof Member || user instanceof VIP) && deluxe > 0) {
-			deluxe--;
-			return 2;
-		}
-		else if(standard > 0) {
-			standard--;
-			return 3;
-		}
-		else
-			return 4;
+		return false; //Room does not exist
 	}
 	
-	// cancellation of VIP room
-	public void removeVIP() {
-		vip++;
-	}
-	
-	// cancellation of deluxe room
-	public void removeDeluxe() {
-		deluxe++;
-	}
-	
-	// cancellation of standard room
-	public void removeStandard() {
-		standard++;
-	}
+	// Working in progress
 }

@@ -4,47 +4,105 @@ import java.util.ArrayList;
 public class Booking {
 	Room room;
 	WaitingList waitingList;
-	ArrayList<User> vipRoom, deluxeRoom, standardRoom; 
-	
+	ArrayList<ArrayList<String>> room_booked; 
+
 	// set booking
 	public boolean setBooking(User user) {
-		int check = room.checkRoom(user);
-		if(check == 4) { // all room full
-			waitingList.addWaiting(user);
-			return false;
-		}
-		else {
-			user.setMax_room_book(user.getmax_room_book()-1);
-			switch(check) {
-				case 1:
-					vipRoom.add(user);
-					break;
-				case 2:
-					deluxeRoom.add(user);
-					break;
-				case 3:
-					standardRoom.add(user);
-					break;
+		int count = 0;
+		for (ArrayList<String> sublist : room_booked) {
+			if(sublist.get(0).equals(user.getName())) {
+				count++;
+				if(user.getMaxRoomBook() >= count) {
+					return false;
+				}
 			}
-			return true;
+        }
+
+		ArrayList<String> booking_info = new ArrayList<>();
+		switch (user.getMemberType().toLowerCase()) {
+			case "vip":
+				if(room.checkRoom("vip")){
+					booking_info.add(user.getName());
+					booking_info.add("vip");
+
+					room_booked.add(booking_info);
+					booking_info.clear();
+					return true;
+				}else if(room.checkRoom("deluxe")){
+					booking_info.add(user.getName());
+					booking_info.add("deluxe");
+
+					room_booked.add(booking_info);
+					booking_info.clear();
+					return true;
+				}else if(room.checkRoom("standard")){
+					booking_info.add(user.getName());
+					booking_info.add("standard");
+
+					room_booked.add(booking_info);
+					booking_info.clear();
+					return true;
+				}else{
+					waitingList.addWaiting(user);
+					return false;
+				}
+			case "member":
+				if(user.getExclReward()){
+					if(room.checkRoom("vip")){
+						booking_info.add(user.getName());
+						booking_info.add("vip");
+
+						room_booked.add(booking_info);
+						booking_info.clear();
+						return true;
+					}
+				}else if(room.checkRoom("deluxe")){
+					booking_info.add(user.getName());
+					booking_info.add("deluxe");
+
+					room_booked.add(booking_info);
+					booking_info.clear();
+					return true;
+				}else if(room.checkRoom("standard")){
+					booking_info.add(user.getName());
+					booking_info.add("standard");
+
+					room_booked.add(booking_info);
+					booking_info.clear();
+					return true;
+				}else{
+					waitingList.addWaiting(user);
+					return false;
+				}
+
+			case "non_member":
+				if(room.checkRoom("standard")){
+					booking_info.add(user.getName());
+					booking_info.add("standard");
+
+					room_booked.add(booking_info);
+					booking_info.clear();
+					return true;
+				}else{
+					waitingList.addWaiting(user);
+					return false;
+				}
+			default:
+				return false;
 		}
 	}
 	
-	public void cancelBooking(User user) {
-		if(standardRoom.contains(user)) {
-			standardRoom.remove(user);
-			user.setMax_room_book(user.getmax_room_book()+1);
-			room.removeStandard();
-		}
-		else if(deluxeRoom.contains(user)) {
-			deluxeRoom.remove(user);
-			user.setMax_room_book(user.getmax_room_book()+1);
-			room.removeDeluxe();
-		}
-		else if(vipRoom.contains(user)) {
-			vipRoom.remove(user);
-			user.setMax_room_book(user.getmax_room_book()+1);
-			room.removeVIP();
-		}		
+	public void cancelBooking(User user, int bookingNumber){
+		int count = 0, i = 0;
+
+		for (ArrayList<String> sublist : room_booked) {
+			if(sublist.get(0).equals(user.getName())) {
+				if(bookingNumber == count) {
+					room_booked.remove(i);
+				}
+				count++;
+			}
+			i++;
+        }
 	}
 }

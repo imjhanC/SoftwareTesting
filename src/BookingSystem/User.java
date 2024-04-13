@@ -1,27 +1,71 @@
 package BookingSystem;
 
-public class User {
-	// member_type VIP,member,normal
+import java.util.Arrays;
 
-	private String name;
+public class User {
+	
+	// member_type VIP,member,normal
+	private String name, member_type;
+
+	//Maximum room booking
 	private int max_room_book;
-	// memberType getter
+	private boolean excl_reward;
+
+	public User(String name, String member_type, boolean excl_reward){
+		this.name = name;
+		this.member_type = member_type.toLowerCase();
+		setMaxRoomBook();
+		this.excl_reward = excl_reward;
+	}
+
+	public String getName(){
+		return name;
+	}
+
 	public String getMemberType() {
-		return "User";
+		return member_type;
+	}
+
+	public int getMaxRoomBook(){
+		return max_room_book;
+	}
+
+	public boolean getExclReward(){
+		return excl_reward;
 	}
 	
-	// constructor 
-	public User(String name) {
+	public void setName(String name){
 		this.name = name;
 	}
-	
-	// set max_room_book
-	public void setMax_room_book(int num) {
-		max_room_book = num;
+
+	public void setMemberType(String member_type){
+		String[] valid_member_type = {"vip", "member", "non_member"};
+
+		// Java-8 function
+		if(Arrays.stream(valid_member_type).anyMatch(member_type.toLowerCase()::equals)){
+			this.member_type = member_type.toLowerCase();
+		}else{
+			System.out.println(member_type + " is not a valid user type.");
+		}
 	}
-	
-	// get max_room_book
-	public int getmax_room_book(){
-		return max_room_book;
+
+	public void setMaxRoomBook(){
+		switch (getMemberType().toLowerCase()) {
+		case "vip":
+			max_room_book = 3;
+			break;
+
+		case "member":
+			max_room_book = 2;
+			break;
+
+		default: //non-member
+			max_room_book = 1;
+			break;
+		}
+	}
+
+	public void setExcelReward(boolean  excl_reward) {
+		this.excl_reward=excl_reward;
 	}
 }
